@@ -25,6 +25,7 @@ public:
     cv::Vec2f calWorldPoint(cv::Mat& imagePointWith1);
     int startRowToDisplay,endRowToDisplay,startColToDisplay,endColToDisplay,AveRow,AveCol;
     std::vector<int> rowsTo,colsTo;
+    void printMat(cv::Mat &src);
 };
 
 #endif // Detector_H

@@ -20,8 +20,8 @@ cv::Mat Detector::testAction(cv::Mat& src)
 
     //test pointToWorld here
 
- //   cv::Vec2f worldPoint = calWorldPoint(imagePoint);
- //  qDebug()<<"worldPoint is:"<<worldPoint[0]<<", "<<worldPoint[1];
+    cv::Vec2f worldPoint = calWorldPoint(imagePoint);
+   qDebug()<<"worldPoint is:"<<worldPoint[0]<<", "<<worldPoint[1];
 
         cv::Vec4i rowLineAve,colLineAve;
         std::vector<cv::Vec4i> lines;
@@ -47,19 +47,21 @@ void Detector::initMat()
 
 
     // get values from matlab
-    float rotateParams[] = {0.9988,0.0158,-0.0456,-0.0174,0.9992,
-                           -0.0347,0.0450,0.0355,0.9984};
-    float intricParams[] = {5129,0,0,0,5131.3,0,1032.2,
-                           848.7977,1};
-    float transParams[] = {-6.5986,-36.8060,629.6464};
+//    float rotateParams[] = {0.9988,0.0158,-0.0456,-0.0174,0.9992,
+//                           -0.0347,0.0450,0.0355,0.9984};
+//    float intricParams[] = {5129,0,0,0,5131.3,0,1032.2,
+//                           848.7977,1};
+//    float transParams[] = {-6.5986,-36.8060,629.6464};
 
-    rotateMat = cv::Mat(3,3,CV_32FC1,rotateParams);
-    intricMat = cv::Mat(3,3,CV_32FC1,intricParams);
-    transMat = cv::Mat(1,3,CV_32FC1,transParams);
+    rotateMat = (cv::Mat_<float>(3, 3) << 0.9983,-0.0447,-0.0385,
+                                           -0.0432,0.9983,-0.0399,
+                                             0.0403,0.0382,0.9985);
+    intricMat = (cv::Mat_<float>(3, 3) << 5126.6,0,0,
+                                           0,5127.2,0,
+                                          1017.7,841.9158,1);
+    transMat = (cv::Mat_<float>(1, 3) << -8.4226,-36.8412,628.8406);
 
-    qDebug()<<rotateMat.at<float>(1,1);
 
-  //  intricMat = intricMat.inv();
 }
 
 cv::Mat Detector::getImagePoint(cv::Mat &src)
@@ -146,24 +148,52 @@ float Detector::centerRecognize(cv::Mat &src, bool rowORcol)
 
 cv::Vec2f Detector::calWorldPoint(cv::Mat &imagePointWith1)
 {
-    cv::Mat A = imagePointWith1.cross(intricMat);// 1*3
+    qDebug()<<"rotateMat: ";
+    printMat(rotateMat);
 
-    cv::Mat B = cv::Mat(3,3,CV_32FC1);
-    B.at<float>(2,0) = A.at<float>(0,0);//  0 0 0
-    B.at<float>(2,1) = A.at<float>(0,1);//  0 0 0
-    B.at<float>(2,2) = A.at<float>(0,2);//    A
+    qDebug()<<"intricMat: ";
+    printMat(intricMat);
 
-    cv::Mat C = cv::Mat(3,3,CV_32FC1);  //  1 0 0
-    C.at<float>(0,0) = 1;               //  0 1 0
-    C.at<float>(1,1) = 1;               //  0 0 0
+    qDebug()<<"transMat: ";
+    printMat(transMat);
 
-    cv::Mat D = transMat.cross((C.cross(rotateMat) + B).inv());
+    qDebug()<<"imagePointWith1: ";
+    printMat(imagePointWith1);
+
+    cv::Mat A = imagePointWith1*(intricMat.inv());// 1*3
+
+    cv::Mat E = rotateMat;
+    E.at<float>(2,0)=A.at<float>(0,0);
+    E.at<float>(2,1)=A.at<float>(0,1);
+    E.at<float>(2,2)=A.at<float>(0,2);
+
+    printMat(E);
+
+    cv::Mat D = -transMat*(E.inv());
+
+//    qDebug()<<"D: ";
+//    printMat(D);
 
     cv::Vec2f worldPoint;
     worldPoint[0] = D.at<float>(0,0);
     worldPoint[1] = D.at<float>(0,1);
 
     return worldPoint;
+}
+
+void Detector::printMat(cv::Mat &src)
+{
+    if(src.rows==3){
+        qDebug()<<src.at<float>(0,0)<<"\t"<<src.at<float>(0,1)<<"\t"<<src.at<float>(0,2);
+        qDebug()<<src.at<float>(1,0)<<"\t"<<src.at<float>(1,1)<<"\t"<<src.at<float>(1,2);
+        qDebug()<<src.at<float>(2,0)<<"\t"<<src.at<float>(2,1)<<"\t"<<src.at<float>(2,2);
+        qDebug()<<endl;
+    }else if(src.rows==1){
+        qDebug()<<src.at<float>(0,0)<<"\t"<<src.at<float>(0,1)<<"\t"<<src.at<float>(0,2);
+        qDebug()<<endl;
+    }
+
+
 }
 
 cv::Mat Detector::drawLines(cv::Mat& backg, std::vector<cv::Vec4i>& lines,cv::Scalar color)
