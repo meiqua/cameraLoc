@@ -21,7 +21,7 @@ cv::Mat Detector::testAction(cv::Mat& src)
     //test pointToWorld here
 
     cv::Vec2f worldPoint = calWorldPoint(imagePoint);
-   qDebug()<<"worldPoint is:"<<worldPoint[0]<<", "<<worldPoint[1];
+   qDebug()<<"worldPoint is:"<<worldPoint[0]<<", "<<worldPoint[1]<<endl;
 
         cv::Vec4i rowLineAve,colLineAve;
         std::vector<cv::Vec4i> lines;
@@ -44,14 +44,6 @@ cv::Mat Detector::testAction(cv::Mat& src)
 
 void Detector::initMat()
 {
-
-
-    // get values from matlab
-//    float rotateParams[] = {0.9988,0.0158,-0.0456,-0.0174,0.9992,
-//                           -0.0347,0.0450,0.0355,0.9984};
-//    float intricParams[] = {5129,0,0,0,5131.3,0,1032.2,
-//                           848.7977,1};
-//    float transParams[] = {-6.5986,-36.8060,629.6464};
 
     rotateMat = (cv::Mat_<float>(3, 3) << 0.9983,-0.0447,-0.0385,
                                            -0.0432,0.9983,-0.0399,
@@ -122,7 +114,7 @@ float Detector::centerRecognize(cv::Mat &src, bool rowORcol)
     int centerRow=0;
     int centerCol=0;
     if(pattern.isEmpty()){
-        qDebug()<<"nothing found";
+     //   qDebug()<<"nothing found";
     }else{
         for(int i=0;i<pattern.size();i++){
             if(pattern[i].count>centerCount){
@@ -148,15 +140,6 @@ float Detector::centerRecognize(cv::Mat &src, bool rowORcol)
 
 cv::Vec2f Detector::calWorldPoint(cv::Mat &imagePointWith1)
 {
-    qDebug()<<"rotateMat: ";
-    printMat(rotateMat);
-
-    qDebug()<<"intricMat: ";
-    printMat(intricMat);
-
-    qDebug()<<"transMat: ";
-    printMat(transMat);
-
     qDebug()<<"imagePointWith1: ";
     printMat(imagePointWith1);
 
@@ -167,12 +150,7 @@ cv::Vec2f Detector::calWorldPoint(cv::Mat &imagePointWith1)
     E.at<float>(2,1)=A.at<float>(0,1);
     E.at<float>(2,2)=A.at<float>(0,2);
 
-    printMat(E);
-
     cv::Mat D = -transMat*(E.inv());
-
-//    qDebug()<<"D: ";
-//    printMat(D);
 
     cv::Vec2f worldPoint;
     worldPoint[0] = D.at<float>(0,0);
@@ -184,12 +162,12 @@ cv::Vec2f Detector::calWorldPoint(cv::Mat &imagePointWith1)
 void Detector::printMat(cv::Mat &src)
 {
     if(src.rows==3){
-        qDebug()<<src.at<float>(0,0)<<"\t"<<src.at<float>(0,1)<<"\t"<<src.at<float>(0,2);
-        qDebug()<<src.at<float>(1,0)<<"\t"<<src.at<float>(1,1)<<"\t"<<src.at<float>(1,2);
-        qDebug()<<src.at<float>(2,0)<<"\t"<<src.at<float>(2,1)<<"\t"<<src.at<float>(2,2);
+        qDebug()<<src.at<float>(0,0)<<"    "<<src.at<float>(0,1)<<"    "<<src.at<float>(0,2);
+        qDebug()<<src.at<float>(1,0)<<"    "<<src.at<float>(1,1)<<"    "<<src.at<float>(1,2);
+        qDebug()<<src.at<float>(2,0)<<"    "<<src.at<float>(2,1)<<"    "<<src.at<float>(2,2);
         qDebug()<<endl;
     }else if(src.rows==1){
-        qDebug()<<src.at<float>(0,0)<<"\t"<<src.at<float>(0,1)<<"\t"<<src.at<float>(0,2);
+        qDebug()<<src.at<float>(0,0)<<"    "<<src.at<float>(0,1)<<"    "<<src.at<float>(0,2);
         qDebug()<<endl;
     }
 
