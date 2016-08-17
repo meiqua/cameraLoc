@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>videos/camera_corrected_noBlueLine.avi</file>
+    </qresource>
+</RCC>
