@@ -1,12 +1,4 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-03-03T17:53:15
-#
-#-------------------------------------------------
-
 QT       += core gui
-
-QT += network concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

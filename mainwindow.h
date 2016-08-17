@@ -20,8 +20,6 @@
 #include <QtGui>
 #include <qwidget>
 #include <iostream>
-#include <QUrl>
-#include <QNetworkAccessManager>
 #include <QMap>
 #include <QByteArray>
 

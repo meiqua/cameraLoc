@@ -4,14 +4,9 @@
 #include "settingsdialog.h"
 #include <QDir>
 #include <QKeyEvent>
-#include <QtNetwork>
-#include <qtconcurrentrun.h>
 #include <QFileDialog>
 #include<QMessageBox>
 #include <QSplitter>
-
-
-//save picture and videocapture should move to thread
 
 using namespace std;
 
@@ -65,21 +60,17 @@ void MainWindow::actionOpen() {
 
     // Load video and start video
     if (!timer->isActive()) {
-        // Open file dialog
-   //     QString fileName = QFileDialog::getOpenFileName(this, "Open Video", ".", "Video Files (*.avi *.mpg)");
-   //       videoCapture.open(fileName.toStdString().c_str());//fileName.toAscii().data());
 
       SettingsDialog::Settings p = settings->settings();
       QString address = p.IPaddress;
 
       if(isDigitStr(address))
-       videoCapture.open(CV_CAP_DSHOW + address.toInt()); //open webcam on laptop when type in 0
+       videoCapture.open(CV_CAP_DSHOW + address.toInt()); //open webcam on laptop when 0
       else
       {
            ui->statusBar->showMessage("opening....",2000);
 
             videoCapture.open((address.toStdString().c_str()));
-            //This capture is blocking,unfortunately I have not found a unblocking solution yet.
          qDebug()<<"open ip address :" << videoCapture.isOpened() << endl;
       }
 
@@ -91,7 +82,6 @@ void MainWindow::actionOpen() {
           // Get frame per second
           int fps=videoCapture.get(CV_CAP_PROP_FPS);
           qDebug()<<"fps is: "<<fps<<endl;
-          //   qDebug("fps: %d", fps);
 
           // Set timer interval
           if(fps>0)
