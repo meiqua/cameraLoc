@@ -13,7 +13,7 @@ public:
     FinderPatternFinder(cv::Mat& srcOri);
 
     cv::Mat src;
-    QList<FinderPattern> possibleCenters;
+    std::vector<FinderPattern> possibleCenters;
     int crossCheckStateCount[5];
 
     void find();

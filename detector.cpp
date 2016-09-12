@@ -107,13 +107,13 @@ float Detector::centerRecognize(cv::Mat &src, bool rowORcol)
     FinderPatternFinder finder(src);
     finder.find();
 
-    QList<FinderPattern> pattern = finder.possibleCenters;
+    std::vector<FinderPattern> pattern = finder.possibleCenters;
 
     int centerCount=0;
     int bestOne=0;
     int centerRow=0;
     int centerCol=0;
-    if(pattern.isEmpty()){
+    if(pattern.empty()){
      //   qDebug()<<"nothing found";
     }else{
         for(int i=0;i<pattern.size();i++){
